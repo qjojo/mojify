@@ -56,6 +56,9 @@ def get_all():
     return [f for f in os.listdir(path) if f[-3:] == 'png']
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print('Please provide the directory containing the font.')
+        sys.exit()
     path = os.path.normpath(sys.argv[1] + '\\')
     file_list = get_all()
     with open('proc.csv', '+w', newline='') as out:
