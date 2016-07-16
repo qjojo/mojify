@@ -14,8 +14,10 @@ class Emoji:
         self.ordinal = number
         self.avg = (0, 0, 0)
         self.get_avg()
+        self.avg = tuple(map(int, self.avg))
         self.mode = (0, 0, 0)
         self.get_mode()
+        self.mode = tuple(map(int, self.mode))
 
     def get_avg(self):
         # get the average color of the emoji
@@ -45,6 +47,8 @@ class Emoji:
                         colors[pixel] = 1
                     else:
                         colors[pixel] += 1
+                        if pixel[3] != 255:
+                            colors[pixel] -= pixel[3] / 255
         mode_count = 0
         for key in colors.keys():
             if colors[key] > mode_count:
