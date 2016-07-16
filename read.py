@@ -44,7 +44,8 @@ if __name__ == '__main__':
     for entry in raw_list:
             emoji_list.append([entry[0],
                                make_tuple(entry[1]),
-                               make_tuple(entry[2])])
+                               make_tuple(entry[2]),
+                               make_tuple(entry[3])])
     poke = load_img('snight_med.png')
     size = poke.size
     avg_color = 0
