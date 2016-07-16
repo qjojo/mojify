@@ -19,7 +19,7 @@ class Emoji:
 
     def get_avg(self):
         # get the average color of the emoji
-        # mode generally works better, median might be even better but i'm lazy
+        # average tends to work best
         size = self.image.size
         pix = self.image.load()
         for x in range(0, size[0]):
@@ -51,6 +51,8 @@ class Emoji:
                 self.mode = key[:3]
                 mode_count = colors[key]
 
+    # TODO: add k-means algorithm for dominant color detection
+
 
 def get_all():
     return [f for f in os.listdir(path) if f[-3:] == 'png']
@@ -64,5 +66,6 @@ if __name__ == '__main__':
     with open('proc.csv', '+w', newline='') as out:
         writer = csv.writer(out)
         for moji_name in file_list:
-            moji = Emoji(moji_name[:-4])
-            writer.writerow([moji.ordinal, str(moji.avg), str(moji.mode)])
+            if '-' not in moji_name:
+                moji = Emoji(moji_name[:-4])
+                writer.writerow([moji.ordinal, str(moji.avg), str(moji.mode)])

@@ -23,13 +23,14 @@ if __name__ == '__main__':
     avg_color = 0
     pix = poke.load()
     emoji_grid = []
+    # XXX: this currently gives a reversed emoji grid (xy swapped)
     for x in range(0, size[0]):
         emoji_grid.append([])
         for y in range(0, size[1]):
             pixel = pix[x, y]
             best_delta = float('Inf')
             for entry in emoji_list:
-                emoji_color = entry[2]
+                emoji_color = entry[1]
                 if pixel[3] == 0:
                     best = None
                 else:
@@ -54,8 +55,10 @@ if __name__ == '__main__':
             line_out = ''
             for char in line:
                 if char is None:
-                    line_out += ' ' * 5
+                    line_out += '⬜'
                 else:
+                    if '-' in char:
+                        char = char[:char.index('-')]
                     char_code = '0x' + char
                     char_code = int(char_code, base=16)
                     line_out += chr(char_code)
