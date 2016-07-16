@@ -24,9 +24,9 @@ if __name__ == '__main__':
     pix = poke.load()
     emoji_grid = []
     # XXX: this currently gives a reversed emoji grid (xy swapped)
-    for x in range(0, size[0]):
+    for y in range(0, size[1]):
         emoji_grid.append([])
-        for y in range(0, size[1]):
+        for x in range(0, size[0]):
             pixel = pix[x, y]
             best_delta = float('Inf')
             for entry in emoji_list:
@@ -54,11 +54,10 @@ if __name__ == '__main__':
         for line in emoji_grid:
             line_out = ''
             for char in line:
+                # TODO: ZWJ support
                 if char is None:
-                    line_out += '⬜'
+                    line_out += '\u2001\u2006'
                 else:
-                    if '-' in char:
-                        char = char[:char.index('-')]
                     char_code = '0x' + char
                     char_code = int(char_code, base=16)
                     line_out += chr(char_code)
