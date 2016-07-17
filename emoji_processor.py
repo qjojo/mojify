@@ -127,7 +127,7 @@ def get_all():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Compute color information')
     parser.add_argument('path', help='path to emoji pngs')
-    parser.add_argument('-a', '--algorithm', metavar='algorithm',
+    parser.add_argument('-a', metavar='algorithm',
                         help='color analysis algorithm (default: average)',
                         choices=['average', 'mode', 'kmeans'],
                         default='average',
@@ -135,9 +135,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
     path = os.path.normpath(args.path + '\\')
     file_list = get_all()
+    count = 0
     with open('proc.csv', '+w', newline='') as out:
         writer = csv.writer(out)
         for moji_name in file_list:
             if '-' not in moji_name:
-                moji = Emoji(moji_name[:-4], args.algorithm)
+                moji = Emoji(moji_name[:-4], args.a)
                 writer.writerow([moji.ordinal, str(moji.dom)])
+                count += 1
+    print('Processed ' + str(count) + ' emoji, Output in proc.csv')
