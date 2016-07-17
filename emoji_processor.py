@@ -3,24 +3,24 @@ from random import randint
 import os
 import sys
 import csv
+import argparse
 
 
 # color comprehension algorithm
 
 class Emoji:
-    def __init__(self, number):
+    def __init__(self, number, alg):
         # is handling args here bad practice? i don't know!!
-        path = os.path.normpath(sys.argv[1] + '\\' + number + '.png')
+        path = os.path.normpath(args.path + '\\' + number + '.png')
         self.image = load_img(path)
         self.ordinal = number
-        self.avg = (0, 0, 0)
-        self.get_avg()
-        self.avg = tuple(map(int, self.avg))
-        self.mode = (0, 0, 0)
-        # self.get_mode()
-        self.mode = tuple(map(int, self.mode))
-        self.kmeans = (0, 0, 0)
-        # self.get_kmeans()
+        self.dom = (0, 0, 0)
+        if alg == 'average':
+            self.get_avg()
+        elif alg == 'mode':
+            self.get_mode()
+        else:
+            self.get_kmeans()
 
     def get_avg(self):
         # get the average color of the emoji
@@ -38,9 +38,10 @@ class Emoji:
             for y in range(0, size[1]):
                 pixel = pix[x, y]
                 pixel = alpha_handling(pixel)
-                self.avg = [sum(a) for a in zip(self.avg[:3], pixel)]
+                self.dom = [sum(a) for a in zip(self.dom[:3], pixel)]
         n_pixels = size[0] * size[1]
-        self.avg = tuple(map(lambda band: band // n_pixels, self.avg))
+        self.dom = tuple(map(lambda band: band // n_pixels, self.dom))
+        self.dom = tuple(map(int, self.dom))
 
     def get_mode(self):
         # as in the statistical mode, not image mode
@@ -62,8 +63,9 @@ class Emoji:
         mode_count = 0
         for key in colors.keys():
             if colors[key] > mode_count:
-                self.mode = key[:3]
+                self.dom = key[:3]
                 mode_count = colors[key]
+        self.dom = tuple(map(int, self.dom))
 
     def get_kmeans(self):
         # XXX: Its broken, only picks null
@@ -112,8 +114,7 @@ class Emoji:
                     converged = False
         mode_centroid = centroid_bins_count.index(
             max(centroid_bins_count))
-        print(mode_centroid)
-        return mode_centroid
+        self.dom = mode_centroid
 
 
 def color_magnitude(c_tuple):
@@ -124,17 +125,19 @@ def get_all():
     return [f for f in os.listdir(path) if f[-3:] == 'png']
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print('Please provide the directory containing the font.')
-        sys.exit()
-    path = os.path.normpath(sys.argv[1] + '\\')
+    parser = argparse.ArgumentParser(description='Compute color information')
+    parser.add_argument('path', help='path to emoji pngs')
+    parser.add_argument('-a', '--algorithm', metavar='algorithm',
+                        help='color analysis algorithm (default: average)',
+                        choices=['average', 'mode', 'kmeans'],
+                        default='average',
+                        required=False)
+    args = parser.parse_args()
+    path = os.path.normpath(args.path + '\\')
     file_list = get_all()
     with open('proc.csv', '+w', newline='') as out:
         writer = csv.writer(out)
         for moji_name in file_list:
             if '-' not in moji_name:
-                moji = Emoji(moji_name[:-4])
-                writer.writerow([moji.ordinal,
-                                 str(moji.avg),
-                                 str(moji.mode),
-                                 str(moji.kmeans)])
+                moji = Emoji(moji_name[:-4], args.algorithm)
+                writer.writerow([moji.ordinal, str(moji.dom)])

@@ -42,10 +42,7 @@ if __name__ == '__main__':
         reader = csv.reader(raw_list)
         raw_list = list(reader)
     for entry in raw_list:
-            emoji_list.append([entry[0],
-                               make_tuple(entry[1]),
-                               make_tuple(entry[2]),
-                               make_tuple(entry[3])])
+            emoji_list.append([entry[0], make_tuple(entry[1])])
     poke = load_img('snight_med.png')
     size = poke.size
     avg_color = 0
