@@ -2,6 +2,8 @@ from PIL import Image
 import csv
 from ast import literal_eval as make_tuple
 from math import sqrt
+import argparse
+import os.path
 
 
 def load_img(image):
@@ -60,7 +62,18 @@ def gen_matrix(pix_data):
             emoji_grid[-1].append(best)
     return emoji_grid
 
+
+def handle_arguments():
+    parser = argparse.ArgumentParser(
+        description='Represent an image using emoji'
+    )
+    parser.add_argument('image', help='image to be processed')
+    args = parser.parse_args()
+    return args
+
 if __name__ == '__main__':
+    args = handle_arguments()
+    path = args.image
     emoji_list = []
     with open('proc.csv') as raw_list:
         emoji_list = []
@@ -68,7 +81,8 @@ if __name__ == '__main__':
         raw_list = list(reader)
     for entry in raw_list:
             emoji_list.append([entry[0], make_tuple(entry[1])])
-    image = load_img('snight_med.png')
+    image = load_img(path)
     size = image.size
     emoji_grid = gen_matrix(image)
     write_out(emoji_grid)
+    print('Output in out.txt')
