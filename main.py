@@ -5,11 +5,13 @@ from math import sqrt
 
 
 def load_img(image):
+    # load an image as a PIL object
     im = Image.open(image).convert('RGBA')
     return im
 
 
 def color_distance(c_tuple1, c_tuple2):
+    # calculate the color distance between two rgb tuples
     red_mean = (c_tuple1[0] + c_tuple2[0]) / 2
     red = c_tuple1[0] - c_tuple2[0]
     green = c_tuple1[1] - c_tuple2[1]
@@ -22,6 +24,7 @@ def color_distance(c_tuple1, c_tuple2):
 
 
 def write_out(text_matrix):
+    # write out emoji grid to txt file
     with open('out.txt', '+w', encoding='utf-8') as out:
         for line in text_matrix:
             line_out = ''
@@ -35,18 +38,10 @@ def write_out(text_matrix):
                     line_out += chr(char_code)
             out.writelines(line_out + '\n')
 
-if __name__ == '__main__':
-    emoji_list = []
-    with open('proc.csv') as raw_list:
-        emoji_list = []
-        reader = csv.reader(raw_list)
-        raw_list = list(reader)
-    for entry in raw_list:
-            emoji_list.append([entry[0], make_tuple(entry[1])])
-    poke = load_img('snight_med.png')
-    size = poke.size
-    avg_color = 0
-    pix = poke.load()
+
+def gen_matrix(pix_data):
+    # generate unicode data from colors
+    pix = pix_data.load()
     emoji_grid = []
     for y in range(0, size[1]):
         emoji_grid.append([])
@@ -63,4 +58,17 @@ if __name__ == '__main__':
                         best = entry[0]
                         best_delta = delta
             emoji_grid[-1].append(best)
+    return emoji_grid
+
+if __name__ == '__main__':
+    emoji_list = []
+    with open('proc.csv') as raw_list:
+        emoji_list = []
+        reader = csv.reader(raw_list)
+        raw_list = list(reader)
+    for entry in raw_list:
+            emoji_list.append([entry[0], make_tuple(entry[1])])
+    image = load_img('snight_med.png')
+    size = image.size
+    emoji_grid = gen_matrix(image)
     write_out(emoji_grid)
