@@ -7,4 +7,11 @@ First generate color comprehension data for your font. I like [twemoji](https://
 $ python3 emoji_processor.py ~/path/to/emoji/pngs -a average
 Processed 851 emoji, Output in proc.csv
 ```
-Currently there is no user interface and the script must be edited directly to specify the input image
+then its easy as
+```
+$ python3 main.py my_image.png
+Output in out.txt
+```
+This was mostly a way for me to learn some data processing and unicode stuff but if you like it that's great!
+![dratini](https://github.com/showtimesynergy/mojify/blob/master/example.PNG "dratini!")
+
